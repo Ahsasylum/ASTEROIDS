@@ -20,13 +20,43 @@ class Player(CircleShape):
 
     def update(self, dt):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]:
-            self.rotation += 90*dt
-        if keys[pygame.K_d]:
-            self.rotation -= 90*dt
-        if keys[pygame.K_w]:
+        if keys[pygame.K_a] and keys[pygame.K_w]:
+            if self.rotation >= 0:
+                self.rotation -= 90*dt
+            else:
+                self.rotation += 90*dt
             self.move(dt)
-        if keys[pygame.K_s]:
+        elif keys[pygame.K_d] and keys[pygame.K_w]:
+            if self.rotation >= 0:
+                self.rotation += 90*dt
+            else:
+                self.rotation -= 90*dt
+            self.move(dt)
+        elif keys[pygame.K_a] and keys[pygame.K_s]:
+            if self.rotation >= 0:
+                self.rotation += 90*dt
+            else:
+                self.rotation -= 90*dt
+            self.move(-dt)
+        elif keys[pygame.K_d] and keys[pygame.K_s]:
+            if self.rotation >= 0:
+                self.rotation -= 90*dt
+            else:
+                self.rotation += 90*dt
+            self.move(-dt)
+        elif keys[pygame.K_a]:
+            if self.rotation >= 0:
+                self.rotation -= 90*dt
+            else:
+                self.rotation += 90*dt
+        elif keys[pygame.K_d]:
+            if self.rotation >= 0:
+                self.rotation += 90*dt
+            else:
+                self.rotation -= 90*dt
+        elif keys[pygame.K_w]:
+            self.move(dt)
+        elif keys[pygame.K_s]:
             self.move(-dt)
 
     def move(self, dt):
