@@ -1,4 +1,4 @@
-from constants import PLAYER_RADIUS, LINE_WIDTH, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS
+from constants import PLAYER_RADIUS, LINE_WIDTH, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS, PLAYER_RESPAWN_COUNT
 from circleshape import CircleShape
 from shot import Shot
 import pygame
@@ -8,6 +8,7 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.shot_cooldown_timer = 0
+        self.respawn_count = PLAYER_RESPAWN_COUNT
     
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -18,7 +19,13 @@ class Player(CircleShape):
         return [a, b, c]
     
     def draw(self, screen):
-        pygame.draw.polygon(screen, "white", self.triangle(), LINE_WIDTH)
+        pygame.draw.polygon(screen, "white", self.triangle(), LINE_WIDTH) 
+        font = pygame.font.SysFont("Arial", 24) #respa
+        text = font.render("Lives remaining: " + str(self.respawn_count), True, "white")
+        screen.blit(text, (20, 20))
+    
+    def relocate_for_respawn(self, x, y):
+        self.position = pygame.Vector2(x, y)
 
     def update(self, dt):
         keys = pygame.key.get_pressed()

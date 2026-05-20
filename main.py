@@ -43,9 +43,16 @@ def main():
         for asteroid in asteroids:
             for shot in shots:
                 if asteroid.collides_with(player):
-                    log_event("player_hit")
-                    print("Game over!")
-                    sys.exit()
+                    player.respawn_count -= 1
+                    if player.respawn_count == 0:
+                        player.kill()
+                        log_event("player_hit")
+                        print("No lives remaining. Game over!")
+                        sys.exit()
+                    else:
+                        player.relocate_for_respawn(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+                        log_event("player_respawn")
+                        print("Respawning player...")
                 elif asteroid.collides_with(shot):
                     log_event("asteroid_hit")
                     asteroid.split()
