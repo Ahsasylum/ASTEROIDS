@@ -5,6 +5,7 @@ from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
+from explosion_effect import ExplosionParticle
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from logger import log_state, log_event
 
@@ -27,6 +28,8 @@ def main():
     Asteroid.containers = (updatable, drawable, asteroids)
     AsteroidField.containers = updatable
     Shot.containers = (updatable, drawable, shots)
+    ExplosionParticle.containers = (updatable, drawable)
+
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     asteroid = AsteroidField()
 
@@ -56,6 +59,7 @@ def main():
                 elif asteroid.collides_with(shot):
                     log_event("asteroid_hit")
                     asteroid.split()
+                    particle = ExplosionParticle(asteroid.position.x, asteroid.position.y)
                     shot.kill()
  
         pygame.display.flip()
