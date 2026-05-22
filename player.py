@@ -9,6 +9,8 @@ class Player(CircleShape):
         self.rotation = 0
         self.shot_cooldown_timer = 0
         self.respawn_count = PLAYER_RESPAWN_COUNT
+        self.frame_counter = 0 # for tracking number of frames between keypresses
+        self.pressed_keys = pygame.key.get_pressed() # for tracking key pressed in previous frame
     
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -29,30 +31,48 @@ class Player(CircleShape):
 
     def update(self, dt):
         keys = pygame.key.get_pressed()
+        if (self.pressed_keys[pygame.K_w] and not keys[pygame.K_w]) or (self.pressed_keys[pygame.K_s] and not keys[pygame.K_s]):
+            self.frame_counter = 0
         if keys[pygame.K_a] and keys[pygame.K_w]:
+            self.frame_counter += 1
             if self.rotation >= 0:
                 self.rotation -= 90*dt % 360
             else:
                 self.rotation += 90*dt % 360
-            self.move(dt)
+            if self.frame_counter < 60:
+                self.move(dt)
+            if self.frame_counter >= 60:
+                self.accelerate(dt)
         elif keys[pygame.K_d] and keys[pygame.K_w]:
+            self.frame_counter += 1
             if self.rotation >= 0:
                 self.rotation += 90*dt % 360
             else:
                 self.rotation -= 90*dt % 360
-            self.move(dt)
+            if self.frame_counter < 60:
+                self.move(dt)
+            if self.frame_counter >= 60:
+                self.accelerate(dt)
         elif keys[pygame.K_a] and keys[pygame.K_s]:
+            self.frame_counter += 1
             if self.rotation >= 0:
                 self.rotation += 90*dt % 360
             else:
                 self.rotation -= 90*dt % 360
-            self.move(-dt)
+            if self.frame_counter < 60:
+                self.move(-dt)
+            if self.frame_counter >= 60:
+                self.accelerate(-dt)
         elif keys[pygame.K_d] and keys[pygame.K_s]:
+            self.frame_counter += 1
             if self.rotation >= 0:
                 self.rotation -= 90*dt % 360
             else:
                 self.rotation += 90*dt % 360
-            self.move(-dt)
+            if self.frame_counter < 60:
+                self.move(-dt)
+            if self.frame_counter >= 60:
+                self.accelerate(-dt)
         elif keys[pygame.K_a]:
             if self.rotation >= 0:
                 self.rotation -= 90*dt % 360
@@ -64,15 +84,27 @@ class Player(CircleShape):
             else:
                 self.rotation -= 90*dt % 360
         elif keys[pygame.K_w]:
-            self.move(dt)
+            self.frame_counter += 1
+            if self.frame_counter < 60:
+                self.move(dt)
+            if self.frame_counter >= 60:
+                self.accelerate(dt)
         elif keys[pygame.K_s]:
-            self.move(-dt)
+            self.frame_counter += 1
+            if self.frame_counter < 60:
+                self.move(-dt)
+            if self.frame_counter >= 60:
+                self.accelerate(-dt)
         if keys[pygame.K_SPACE]:
             if self.shot_cooldown_timer <= 0:
                 self.shoot()
                 self.shot_cooldown_timer = PLAYER_SHOOT_COOLDOWN_SECONDS
         if self.shot_cooldown_timer > 0:
             self.shot_cooldown_timer -= dt
+        self.pressed_keys = keys
+        
+
+
 
 
 
@@ -81,6 +113,17 @@ class Player(CircleShape):
         rotated_unit_vector = unit_vector.rotate(self.rotation)
         rotated_unit_vector *= PLAYER_SPEED * dt
         self.position += rotated_unit_vector
+
+    def accelerate(self, dt):
+        if self.frame_counter < 80:
+            self.move(dt*1.5)
+        elif self.frame_counter < 120:
+            self.move(dt*2)
+        elif self.frame_counter < 160:
+            self.move(dt*2.5)
+        elif self.frame_counter < 200:
+            self.move(dt*3)
+
 
     def shoot(self):
         shot = Shot(self.position.x, self.position.y)
