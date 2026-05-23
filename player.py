@@ -103,11 +103,6 @@ class Player(CircleShape):
             self.shot_cooldown_timer -= dt
         self.pressed_keys = keys
         
-
-
-
-
-
     def move(self, dt):
         unit_vector = pygame.Vector2(0, 1)
         rotated_unit_vector = unit_vector.rotate(self.rotation)

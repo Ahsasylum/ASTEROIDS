@@ -37,13 +37,16 @@ def main():
         log_state()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return
-
+                return   
         screen.fill("black")
         for sprite in drawable:
             sprite.draw(screen)
         updatable.update(dt)
         for asteroid in asteroids:
+            if asteroid.is_seen == True:
+                boundary_states = asteroid.check_bounds(SCREEN_WIDTH, SCREEN_HEIGHT)
+                if any(boundary_states):
+                    asteroid.wrap(boundary_states, SCREEN_WIDTH, SCREEN_HEIGHT)
             for shot in shots:
                 if asteroid.collides_with(player):
                     player.respawn_count -= 1
@@ -61,6 +64,9 @@ def main():
                     asteroid.split()
                     particle = ExplosionParticle(asteroid.position.x, asteroid.position.y)
                     shot.kill()
+        player_bound = player.check_bounds(SCREEN_WIDTH, SCREEN_HEIGHT)
+        if any(player_bound):
+            player.wrap(player_bound, SCREEN_WIDTH, SCREEN_HEIGHT)
  
         pygame.display.flip()
         dt = clock.tick(60) / 1000
