@@ -18,6 +18,8 @@ def main():
     pygame.init()
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    bg = pygame.image.load("./backgroundimage/backgroundimage.png").convert_alpha()
+    bg = pygame.transform.scale(bg, (SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
     dt = 0
     updatable = pygame.sprite.Group()
@@ -38,7 +40,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return   
-        screen.fill("black")
+        screen.blit(bg, (0, 0))
         for sprite in drawable:
             sprite.draw(screen)
         updatable.update(dt)
