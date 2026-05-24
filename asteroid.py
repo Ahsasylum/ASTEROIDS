@@ -12,19 +12,29 @@ class Asteroid(CircleShape):
         self.is_seen = False
         self.image = pygame.image.load("./asteroidsurface/asteroidsurfaceimage.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (self.radius*2, self.radius*2))
-        self.mask_surface = pygame.Surface((self.radius*2, self.radius*2), pygame.SRCALPHA)
+        self.initial_rotation_angle = random.uniform(-2, 2)
+        self.rotation_angle = self.initial_rotation_angle
+        self.rotated_image = self.image
+        
   
     
     def draw(self, screen):
-        screen.blit(self.mask_surface, (self.position.x - self.radius, self.position.y - self.radius))
+        self.rotating()
         pygame.draw.circle(screen, (255, 255, 255, 255), self.position, self.radius)
-        screen.blit(self.image, (self.position.x - self.radius, self.position.y - self.radius), special_flags=pygame.BLEND_RGBA_MIN)
+        rotated_image_rect = self.rotated_image.get_rect(center=self.position)
+        screen.blit(self.rotated_image, rotated_image_rect, special_flags=pygame.BLEND_RGBA_MIN)
         
 
     def update(self, dt):
         if self.is_seen == False:
             self.is_asteroid_seen()
         self.position += self.velocity * dt
+
+    def rotating(self):
+       self.rotated_image = pygame.transform.rotate(self.image, self.rotation_angle)
+       self.rotation_angle += self.initial_rotation_angle
+
+    
 
     def is_asteroid_seen(self):
         if self.position.x > 0 and self.position.x < SCREEN_WIDTH:

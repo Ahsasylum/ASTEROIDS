@@ -49,19 +49,19 @@ def main():
                 boundary_states = asteroid.check_bounds(SCREEN_WIDTH, SCREEN_HEIGHT)
                 if any(boundary_states):
                     asteroid.wrap(boundary_states, SCREEN_WIDTH, SCREEN_HEIGHT)
+            if asteroid.collides_with(player):
+                player.respawn_count -= 1
+                if player.respawn_count == 0:
+                    player.kill()
+                    log_event("player_hit")
+                    print("No lives remaining. Game over!")
+                    sys.exit()
+                else:
+                    player.relocate_for_respawn(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+                    log_event("player_respawn")
+                    print("Respawning player...")
             for shot in shots:
-                if asteroid.collides_with(player):
-                    player.respawn_count -= 1
-                    if player.respawn_count == 0:
-                        player.kill()
-                        log_event("player_hit")
-                        print("No lives remaining. Game over!")
-                        sys.exit()
-                    else:
-                        player.relocate_for_respawn(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
-                        log_event("player_respawn")
-                        print("Respawning player...")
-                elif asteroid.collides_with(shot):
+                if asteroid.collides_with(shot):
                     log_event("asteroid_hit")
                     asteroid.split()
                     particle = ExplosionParticle(asteroid.position.x, asteroid.position.y)
